@@ -1,0 +1,39 @@
+{
+  "decision_table": {
+    "version": "1",
+    "match_policy": "first_match",
+    "no_match_policy": "return_default",
+    "cols": [
+      {
+        "name": "code1",
+        "type": "evaluate",
+        "data_type": "string"
+      },
+      {
+        "name": "value",
+        "type": "return",
+        "data_type": "string"
+      }
+    ],
+    "rows": [
+      {
+        "cols": [
+          {
+            "name": "code1",
+            "value": "NOT_ANY_CONTAINED_IN 1, 2, 3, 4, 5"
+          },
+          {
+            "name": "value",
+            "value": "row 0"
+          }
+        ]
+      }
+    ],
+    "default_row": [
+      {
+        "name": "value",
+        "value": "row default"
+      }
+    ]
+  }
+}

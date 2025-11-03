@@ -1,0 +1,31 @@
+{
+  "decision_table": {
+    "version": "{\"type\":\"string\"}",
+    "match_policy": "{\"type\":\"string\", \"regex\":\"^(first_match|all_matches)\"}",
+    "no_match_policy": "{\"type\":\"string\", \"regex\":\"^(return_default|return_none)\"}",
+    "row_validation_policy": "{\"type\":\"string\", \"regex\":\"^(strict|lenient)\"}",
+    "cols": [
+      {
+        "name": "{\"type\":\"string\"}",
+        "type": "{\"type\":\"string\", \"regex\":\"^(evaluate|return|rule_id|comments)\"}",
+        "data_type": "{\"type\":\"string\", \"regex\":\"^(string|integer|long|boolean|double|bigdecimal)\"}"
+      }
+    ],
+    "rows": [
+      {
+        "cols": [
+          {
+            "name": "{\"type\":\"string\"}",
+            "value": "{\"type\":\"string\", \"null_allowed\":true}"
+          }
+        ]
+      }
+    ],
+    "default_row": [
+      {
+        "name": "{\"type\":\"string\"}",
+        "value": "{\"type\":\"string\", \"null_allowed\":true}"
+      }
+    ]
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "decision_table": {
+    "version": "1",
+    "match_policy": "first_match",
+    "no_match_policy": "return_default",
+    "cols": [
+      {
+        "name": "score",
+        "type": "evaluate",
+        "data_type": "long"
+      },
+      {
+        "name": "yob",
+        "type": "evaluate",
+        "data_type": "integer"
+      },
+      {
+        "name": "code",
+        "type": "evaluate",
+        "data_type": "string"
+      },
+      {
+        "name": "is_married",
+        "type": "evaluate",
+        "data_type": "boolean"
+      },
+      {
+        "name": "function",
+        "type": "return",
+        "data_type": "string"
+      },
+      {
+        "name": "value",
+        "type": "return",
+        "data_type": "integer"
+      },
+      {
+        "name": "is_happy",
+        "type": "return",
+        "data_type": "boolean"
+      }
+    ],
+    "rows": [
+      {
+        "cols": [
+          {
+            "name": "score",
+            "value": "= 10"
+          },
+          {
+            "name": "yob",
+            "value": "= 1975"
+          },
+          {
+            "name": "code",
+            "value": "IN 4G"
+          },
+          {
+            "name": "is_married",
+            "value": "= true"
+          },
+          {
+            "name": "function",
+            "value": "foo1"
+          },
+          {
+            "name": "value",
+            "value": "1"
+          },
+          {
+            "name": "is_happy",
+            "value": "true"
+          }
+        ]
+      }
+    ],
+    "default_row": [
+      {
+        "name": "function",
+        "value": "foo default"
+      },
+      {
+        "name": "value",
+        "value": "2"
+      },
+      {
+        "name": "is_happy",
+        "value": "true"
+      }
+    ]
+  }
+}

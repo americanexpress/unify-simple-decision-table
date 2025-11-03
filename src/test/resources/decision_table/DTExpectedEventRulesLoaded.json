@@ -1,0 +1,30 @@
+{
+  "decision_table_event": {
+    "system_name": "Test",
+    "event_name": "RULES_LOADED",
+    "table_name": "/decision_table/DTTestEvent.json",
+    "table_size": 5,
+    "rules": [
+      {
+        "rule_id": "rule_1",
+        "comments": ""
+      },
+      {
+        "rule_id": "rule_2",
+        "comments": ""
+      },
+      {
+        "rule_id": "rule_3",
+        "comments": ""
+      },
+      {
+        "rule_id": "4",
+        "comments": ""
+      },
+      {
+        "rule_id": "rule_default",
+        "comments": ""
+      }
+    ]
+  }
+}

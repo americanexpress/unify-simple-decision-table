@@ -1,0 +1,61 @@
+{
+  "decision_table": {
+    "version": "1",
+    "match_policy": "first_match",
+    "no_match_policy": "return_default",
+    "cols": [
+      {
+        "name": "ecol1",
+        "type": "evaluate",
+        "data_type": "string"
+      },
+      {
+        "name": "ecol2",
+        "type": "evaluate",
+        "data_type": "long"
+      },
+      {
+        "name": "rcol1",
+        "type": "return",
+        "data_type": "string"
+      },
+      {
+        "name": "rcol2",
+        "type": "return",
+        "data_type": "long"
+      }
+    ],
+    "rows": [
+      {
+        "cols": [
+          {
+            "name": "ecol1",
+            "value": "= CR"
+          },
+          {
+            "name": "ecol2",
+            "value": null
+          },
+          {
+            "name": "rcol1",
+            "value": "row_1_1"
+          },
+          {
+            "name": "rcol2",
+            "value": ""
+          }
+        ]
+      }
+    ],
+    "default_row": [
+      {
+        "name": "rcol1",
+        "value": "row_default_1"
+      },
+      {
+        "name": "rcol2",
+        "value": "100"
+      }
+    ]
+  }
+}

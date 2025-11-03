@@ -1,0 +1,69 @@
+/*
+ * Copyright 2025 American Express Travel Related Services Company, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
+ */
+
+package com.americanexpress.unify.decision_table;
+
+import java.util.Map;
+import java.util.Set;
+
+/*
+ * @author Deepak Arora
+ */
+public class MatchedRow {
+
+  private Map<String, RetDTCell> map = null;
+  private String ruleId = "";
+  private String comments = "";
+  private int rowNum = 0; // 0 is not a valid value as we have a 1 based index for row numbers
+
+  MatchedRow(Map<String, RetDTCell> map, String ruleId, String comments, int rowNum) {
+    this.map = map;
+    if (ruleId != null) {
+      this.ruleId = ruleId;
+    }
+    if (comments != null) {
+      this.comments = comments;
+    }
+    this.rowNum = rowNum;
+  }
+
+  Map<String, RetDTCell> getMap() {
+    return map;
+  }
+
+  public RetDTCell get(String name) {
+    return map.get(name);
+  }
+
+  public Set<Map.Entry<String, RetDTCell>> entrySet() {
+    return map.entrySet();
+  }
+
+  public int size() {
+    return map.size();
+  }
+
+  public String getRuleId() {
+    return ruleId;
+  }
+
+  public String getComments() {
+    return comments;
+  }
+
+  public int getRowNum() {
+    return rowNum;
+  }
+
+}

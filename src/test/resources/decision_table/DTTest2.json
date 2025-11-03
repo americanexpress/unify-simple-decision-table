@@ -1,0 +1,124 @@
+{
+  "decision_table": {
+    "version": "1",
+    "match_policy": "all_matches",
+    "no_match_policy": "return_default",
+    "row_validation_policy": "lenient",
+    "cols": [
+      {
+        "name": "name",
+        "type": "return",
+        "data_type": "string"
+      },
+      {
+        "name": "phone",
+        "type": "return",
+        "data_type": "string"
+      },
+      {
+        "name": "income_long",
+        "type": "return",
+        "data_type": "long"
+      },
+      {
+        "name": "income_integer",
+        "type": "return",
+        "data_type": "integer"
+      },
+      {
+        "name": "income_double",
+        "type": "return",
+        "data_type": "double"
+      },
+      {
+        "name": "income_decimal",
+        "type": "return",
+        "data_type": "bigdecimal"
+      }
+    ],
+    "rows": [
+      {
+        "cols": [
+          {
+            "name": "name",
+            "value": "name_1"
+          },
+          {
+            "name": "phone",
+            "value": "480"
+          },
+          {
+            "name": "income_long",
+            "value": ""
+          },
+          {
+            "name": "income_integer",
+            "value": ""
+          },
+          {
+            "name": "income_double",
+            "value": ""
+          },
+          {
+            "name": "income_decimal",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "cols": [
+          {
+            "name": "name",
+            "value": "#com.americanexpress.unify.decision_table.TestInvokableReturn.execute"
+          },
+          {
+            "name": "phone",
+            "value": "xyz"
+          },
+          {
+            "name": "income_long",
+            "value": "#com.americanexpress.unify.decision_table.TestInvokableReturnLong.execute"
+          },
+          {
+            "name": "income_integer",
+            "value": "#com.americanexpress.unify.decision_table.TestInvokableReturnInteger.execute"
+          },
+          {
+            "name": "income_double",
+            "value": "#com.americanexpress.unify.decision_table.TestInvokableReturnDouble.execute"
+          },
+          {
+            "name": "income_decimal",
+            "value": "#com.americanexpress.unify.decision_table.TestInvokableReturnDecimal.execute"
+          }
+        ]
+      }
+    ],
+    "default_row": [
+      {
+        "name": "name",
+        "value": ""
+      },
+      {
+        "name": "phone",
+        "value": "default phone"
+      },
+      {
+        "name": "income_long",
+        "value": ""
+      },
+      {
+        "name": "income_integer",
+        "value": ""
+      },
+      {
+        "name": "income_double",
+        "value": ""
+      },
+      {
+        "name": "income_decimal",
+        "value": ""
+      }
+    ]
+  }
+}

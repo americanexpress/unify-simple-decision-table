@@ -1,0 +1,81 @@
+{
+  "decision_table": {
+    "version": "1",
+    "match_policy": "all_matches",
+    "no_match_policy": "return_default",
+    "cols": [
+      {
+        "name": "code",
+        "type": "evaluate",
+        "data_type": "string"
+      },
+      {
+        "name": "score",
+        "type": "evaluate",
+        "data_type": "integer"
+      },
+      {
+        "name": "value",
+        "type": "return",
+        "data_type": "string"
+      },
+      {
+        "name": "new_score",
+        "type": "return",
+        "data_type": "integer"
+      }
+    ],
+    "rows": [
+      {
+        "cols": [
+          {
+            "name": "code",
+            "value": "ANY_CONTAINED_IN 4GG, 5FF, 7HH, U55"
+          },
+          {
+            "name": "score",
+            "value": "= 5"
+          },
+          {
+            "name": "value",
+            "value": "row 0"
+          },
+          {
+            "name": "new_score",
+            "value": "0"
+          }
+        ]
+      },
+      {
+        "cols": [
+          {
+            "name": "code",
+            "value": "IN 4GG, 5FF, 7HH, U55"
+          },
+          {
+            "name": "score",
+            "value": "= 5"
+          },
+          {
+            "name": "value",
+            "value": "row 1"
+          },
+          {
+            "name": "new_score",
+            "value": "1"
+          }
+        ]
+      }
+    ],
+    "default_row": [
+      {
+        "name": "value",
+        "value": "row default"
+      },
+      {
+        "name": "new_score",
+        "value": "2"
+      }
+    ]
+  }
+}

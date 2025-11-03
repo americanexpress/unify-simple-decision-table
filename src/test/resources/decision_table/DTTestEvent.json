@@ -1,0 +1,192 @@
+{
+  "decision_table": {
+    "version": "1",
+    "match_policy": "first_match",
+    "no_match_policy": "return_default",
+    "cols": [
+      {
+        "name": "rule_id",
+        "type": "rule_id",
+        "data_type": "string"
+      },
+      {
+        "name": "score",
+        "type": "evaluate",
+        "data_type": "long"
+      },
+      {
+        "name": "yob",
+        "type": "evaluate",
+        "data_type": "integer"
+      },
+      {
+        "name": "code",
+        "type": "evaluate",
+        "data_type": "string"
+      },
+      {
+        "name": "function",
+        "type": "return",
+        "data_type": "string"
+      },
+      {
+        "name": "value",
+        "type": "return",
+        "data_type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "return",
+        "data_type": "string"
+      }
+    ],
+    "rows": [
+      {
+        "cols": [
+          {
+            "name": "rule_id",
+            "value": "rule_1"
+          },
+          {
+            "name": "score",
+            "value": ""
+          },
+          {
+            "name": "yob",
+            "value": "> 1975"
+          },
+          {
+            "name": "code",
+            "value": "IN 4G, 5FF, 7HH, U55"
+          },
+          {
+            "name": "function",
+            "value": "foo"
+          },
+          {
+            "name": "value",
+            "value": "2"
+          },
+          {
+            "name": "name",
+            "value": "name_1"
+          }
+        ]
+      },
+      {
+        "cols": [
+          {
+            "name": "rule_id",
+            "value": "rule_2"
+          },
+          {
+            "name": "score",
+            "value": "= #com.americanexpress.unify.decision_table.TestInvokableEval.execute"
+          },
+          {
+            "name": "yob",
+            "value": ""
+          },
+          {
+            "name": "code",
+            "value": ""
+          },
+          {
+            "name": "function",
+            "value": "foo1"
+          },
+          {
+            "name": "value",
+            "value": "11"
+          },
+          {
+            "name": "name",
+            "value": "#com.americanexpress.unify.decision_table.TestInvokableReturn.execute"
+          }
+        ]
+      },
+      {
+        "cols": [
+          {
+            "name": "rule_id",
+            "value": "rule_3"
+          },
+          {
+            "name": "score",
+            "value": "= 1"
+          },
+          {
+            "name": "yob",
+            "value": "= 1900"
+          },
+          {
+            "name": "code",
+            "value": "= jexl"
+          },
+          {
+            "name": "function",
+            "value": "foo3"
+          },
+          {
+            "name": "value",
+            "value": "12"
+          },
+          {
+            "name": "name",
+            "value": "?return (yob + 10);"
+          }
+        ]
+      },
+      {
+        "cols": [
+          {
+            "name": "rule_id",
+            "value": ""
+          },
+          {
+            "name": "score",
+            "value": "< 50"
+          },
+          {
+            "name": "yob",
+            "value": ""
+          },
+          {
+            "name": "code",
+            "value": ""
+          },
+          {
+            "name": "function",
+            "value": ""
+          },
+          {
+            "name": "value",
+            "value": ""
+          },
+          {
+            "name": "name",
+            "value": ""
+          }
+        ]
+      }
+    ],
+    "default_row": [
+      {
+        "name": "rule_id",
+        "value": "rule_default"
+      },
+      {
+        "name": "function",
+        "value": "foo4"
+      },
+      {
+        "name": "value",
+        "value": "4"
+      },
+      {
+        "name": "name",
+        "value": ""
+      }
+    ]
+  }
+}

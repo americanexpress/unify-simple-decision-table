@@ -1,0 +1,118 @@
+{
+  "decision_table": {
+    "version": "1",
+    "match_policy": "first_match",
+    "no_match_policy": "return_default",
+    "cols": [
+      {
+        "name": "score",
+        "type": "evaluate",
+        "data_type": "long"
+      },
+      {
+        "name": "yob",
+        "type": "evaluate",
+        "data_type": "integer"
+      },
+      {
+        "name": "code",
+        "type": "evaluate",
+        "data_type": "string"
+      },
+      {
+        "name": "value",
+        "type": "return",
+        "data_type": "integer"
+      },
+      {
+        "name": "name",
+        "type": "return",
+        "data_type": "string"
+      }
+    ],
+    "rows": [
+      {
+        "cols": [
+          {
+            "name": "score",
+            "value": "= 1"
+          },
+          {
+            "name": "yob",
+            "value": "= 1900"
+          },
+          {
+            "name": "code",
+            "value": "= jexl"
+          },
+          {
+            "name": "value",
+            "value": "?#pragma jexl.namespace.Integer java.lang.Integer; var i = Integer:parseInt(yob); return (i + 10);"
+          },
+          {
+            "name": "name",
+            "value": "?return ('Hello from ' + code);"
+          }
+        ]
+      },
+      {
+        "cols": [
+          {
+            "name": "score",
+            "value": "= 2"
+          },
+          {
+            "name": "yob",
+            "value": "= 1900"
+          },
+          {
+            "name": "code",
+            "value": "= jexl_2"
+          },
+          {
+            "name": "value",
+            "value": "?#pragma jexl.namespace.Long java.lang.Long; var i = Long:parseLong(yob); return (i + 20);"
+          },
+          {
+            "name": "name",
+            "value": "?return ('Hello from ' + code);"
+          }
+        ]
+      },
+      {
+        "cols": [
+          {
+            "name": "score",
+            "value": "= 3"
+          },
+          {
+            "name": "yob",
+            "value": "= 1900"
+          },
+          {
+            "name": "code",
+            "value": "= jexl_3"
+          },
+          {
+            "name": "value",
+            "value": "?return 20;"
+          },
+          {
+            "name": "name",
+            "value": "?return ('Hello from ' + new(\"java.lang.Date\"));"
+          }
+        ]
+      }
+    ],
+    "default_row": [
+      {
+        "name": "value",
+        "value": "4"
+      },
+      {
+        "name": "name",
+        "value": ""
+      }
+    ]
+  }
+}

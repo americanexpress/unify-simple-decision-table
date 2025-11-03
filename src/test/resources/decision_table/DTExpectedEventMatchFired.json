@@ -1,0 +1,49 @@
+{
+  "decision_table_event": {
+    "system_name": "Test",
+    "event_name": "MATCH_FIRED",
+    "table_name": "/decision_table/DTTestEvent.json",
+    "table_size": 5,
+    "input": [
+      {
+        "col_name": "code",
+        "col_type": "STRING",
+        "value": "4GG"
+      },
+      {
+        "col_name": "score",
+        "col_type": "LONG",
+        "value": "90"
+      },
+      {
+        "col_name": "yob",
+        "col_type": "INTEGER",
+        "value": "2014"
+      }
+    ],
+    "result": [
+      {
+        "rule_id": "rule_default",
+        "comments": "",
+        "row_num": 5,
+        "values": [
+          {
+            "col_name": "function",
+            "col_type": "STRING",
+            "value": "foo4"
+          },
+          {
+            "col_name": "name",
+            "col_type": "STRING",
+            "value": ""
+          },
+          {
+            "col_name": "value",
+            "col_type": "INTEGER",
+            "value": "4"
+          }
+        ]
+      }
+    ]
+  }
+}

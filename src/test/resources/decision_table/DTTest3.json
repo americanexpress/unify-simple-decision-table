@@ -1,0 +1,81 @@
+{
+  "decision_table": {
+    "version": "1",
+    "match_policy": "first_match",
+    "no_match_policy": "return_default",
+    "cols": [
+      {
+        "name": "code",
+        "type": "evaluate",
+        "data_type": "string"
+      },
+      {
+        "name": "score",
+        "type": "evaluate",
+        "data_type": "integer"
+      },
+      {
+        "name": "value",
+        "type": "return",
+        "data_type": "string"
+      },
+      {
+        "name": "new_score",
+        "type": "return",
+        "data_type": "integer"
+      }
+    ],
+    "rows": [
+      {
+        "cols": [
+          {
+            "name": "code",
+            "value": "IN 4GG, 5FF, 7HH, U55"
+          },
+          {
+            "name": "score",
+            "value": "= 5"
+          },
+          {
+            "name": "value",
+            "value": ""
+          },
+          {
+            "name": "new_score",
+            "value": ""
+          }
+        ]
+      },
+      {
+        "cols": [
+          {
+            "name": "code",
+            "value": ""
+          },
+          {
+            "name": "score",
+            "value": ""
+          },
+          {
+            "name": "value",
+            "value": ""
+          },
+          {
+            "name": "new_score",
+            "value": ""
+          }
+        ]
+      }
+    ],
+    "default_row": [
+      {
+        "name": "value",
+        "value": "default value"
+      },
+      {
+        "name": "new_score",
+        "value": "default new score"
+      }
+    ]
+  }
+}

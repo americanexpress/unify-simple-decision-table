@@ -1,0 +1,30 @@
+{
+  "decision_table_event": {
+    "system_name": "{\"type\":\"string\"}",
+    "event_name": "{\"type\":\"string\", \"regex\":\"^(MATCH_FIRED)\"}",
+    "table_name": "{\"type\":\"string\"}",
+    "table_size": "{\"type\":\"integer\"}",
+    "timestamp": "{\"type\":\"date\",\"format\":\"uuuu-MM-dd HH:mm:ss.SSS VV\"}",
+    "input": [
+      {
+        "col_name": "{\"type\":\"string\"}",
+        "col_type": "{\"type\":\"string\", \"regex\":\"^(STRING|INTEGER|LONG|BOOLEAN|DOUBLE|BIGDECIMAL)\"}",
+        "value": "{\"type\":\"string\", \"null_allowed\":true}"
+      }
+    ],
+    "result": [
+      {
+        "rule_id": "{\"type\":\"string\"}",
+        "comments": "{\"type\":\"string\"}",
+        "row_num": "{\"type\":\"integer\"}",
+        "values": [
+          {
+            "col_name": "{\"type\":\"string\"}",
+            "col_type": "{\"type\":\"string\", \"regex\":\"^(STRING|INTEGER|LONG|BOOLEAN|DOUBLE|BIGDECIMAL)\"}",
+            "value": "{\"type\":\"string\", \"null_allowed\":true}"
+          }
+        ]
+      }
+    ]
+  }
+}

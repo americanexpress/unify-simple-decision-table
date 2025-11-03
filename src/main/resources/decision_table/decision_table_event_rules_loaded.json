@@ -1,0 +1,15 @@
+{
+  "decision_table_event": {
+    "system_name": "{\"type\":\"string\"}",
+    "event_name": "{\"type\":\"string\", \"regex\":\"^(RULES_LOADED)\"}",
+    "table_name": "{\"type\":\"string\"}",
+    "table_size": "{\"type\":\"integer\"}",
+    "timestamp": "{\"type\":\"date\",\"format\":\"uuuu-MM-dd HH:mm:ss.SSS VV\"}",
+    "rules": [
+      {
+        "rule_id": "{\"type\":\"string\"}",
+        "comments": "{\"type\":\"string\"}"
+      }
+    ]
+  }
+}

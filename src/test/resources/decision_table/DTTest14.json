@@ -1,0 +1,100 @@
+{
+  "decision_table": {
+    "version": "1",
+    "match_policy": "first_match",
+    "no_match_policy": "return_default",
+    "row_validation_policy": "lenient",
+    "cols": [
+      {
+        "name": "code1",
+        "type": "evaluate",
+        "data_type": "string"
+      },
+      {
+        "name": "code2",
+        "type": "evaluate",
+        "data_type": "string"
+      },
+      {
+        "name": "code3",
+        "type": "evaluate",
+        "data_type": "string"
+      },
+      {
+        "name": "value1",
+        "type": "return",
+        "data_type": "string"
+      },
+      {
+        "name": "value2",
+        "type": "return",
+        "data_type": "string"
+      },
+      {
+        "name": "value3",
+        "type": "return",
+        "data_type": "string"
+      }
+    ],
+    "rows": [
+      {
+        "cols": [
+          {
+            "name": "code1",
+            "value": "= 1"
+          },
+          {
+            "name": "code2",
+            "value": "= 1"
+          },
+          {
+            "name": "value1",
+            "value": "row_1_value1"
+          },
+          {
+            "name": "value2",
+            "value": "row_1_value2"
+          },
+          {
+            "name": "value3",
+            "value": "row_1_value3"
+          }
+        ]
+      },
+      {
+        "cols": [
+          {
+            "name": "code1",
+            "value": "= 1"
+          },
+          {
+            "name": "value1",
+            "value": null
+          },
+          {
+            "name": "value2",
+            "value": "row_2_value2"
+          },
+          {
+            "name": "value3",
+            "value": "row_2_value3"
+          }
+        ]
+      }
+    ],
+    "default_row": [
+      {
+        "name": "value1",
+        "value": "default_value1"
+      },
+      {
+        "name": "value2",
+        "value": "default_value2"
+      },
+      {
+        "name": "value3",
+        "value": "default_value3"
+      }
+    ]
+  }
+}
