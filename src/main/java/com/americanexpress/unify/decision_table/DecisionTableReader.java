@@ -38,7 +38,7 @@ abstract class DecisionTableReader {
 
   protected final void loadDocumentModel() {
     if (JDocument.isDocumentModelLoaded("decision_table") == false) {
-      String json = BaseUtils.getResourceAsString(JsonReader.class, "/decision_table/decision_table.json");
+      String json = BaseUtils.getResourceAsString(JsonReader.class, "/com/americanexpress/unify/decision_table/decision_table.json");
       JDocument.loadDocumentModel("decision_table", json);
     }
   }
@@ -55,19 +55,19 @@ abstract class DecisionTableReader {
     loadDocumentModel();
     Document d = new JDocument("decision_table", null);
 
-    d.setString("$.decision_table.version", version);
-    d.setString("$.decision_table.match_policy", mp.toString().toLowerCase());
-    d.setString("$.decision_table.no_match_policy", nmp.toString().toLowerCase());
+    d.setString("decision_table$.decision_table.version", version);
+    d.setString("decision_table$.decision_table.match_policy", mp.toString().toLowerCase());
+    d.setString("decision_table$.decision_table.no_match_policy", nmp.toString().toLowerCase());
     if (rvp != null) {
-      d.setString("$.decision_table.row_validation_policy", rvp.toString().toLowerCase());
+      d.setString("decision_table$.decision_table.row_validation_policy", rvp.toString().toLowerCase());
     }
 
     // write the cols
     for (int i = 0; i < cols.size(); i++) {
       DTColumn dtCol = cols.get(i);
-      d.setString("$.decision_table.cols[%].name", dtCol.getName(), i + "");
-      d.setString("$.decision_table.cols[%].type", dtCol.getColumnType().toString().toLowerCase(), i + "");
-      d.setString("$.decision_table.cols[%].data_type", dtCol.getDataType().toString().toLowerCase(), i + "");
+      d.setString("decision_table$.decision_table.cols[%].name", dtCol.getName(), i + "");
+      d.setString("decision_table$.decision_table.cols[%].type", dtCol.getColumnType().toString().toLowerCase(), i + "");
+      d.setString("decision_table$.decision_table.cols[%].data_type", dtCol.getDataType().toString().toLowerCase(), i + "");
     }
 
     // write rows
@@ -96,8 +96,8 @@ abstract class DecisionTableReader {
             s = cell.getValue();
           }
         }
-        d.setString("$.decision_table.rows[%].cols[%].name", colName, i + "", j + "");
-        d.setString("$.decision_table.rows[%].cols[%].value", s, i + "", j + "");
+        d.setString("decision_table$.decision_table.rows[%].cols[%].name", colName, i + "", j + "");
+        d.setString("decision_table$.decision_table.rows[%].cols[%].value", s, i + "", j + "");
       }
     }
 
@@ -110,22 +110,22 @@ abstract class DecisionTableReader {
       int i = 0;
       DTCell ruleIdCell = row.getRuleIdCell();
       if (ruleIdCell != null) {
-        d.setString("$.decision_table.default_row[%].name", ruleIdCell.getColumnName(), i + "");
-        d.setString("$.decision_table.default_row[%].value", ruleIdCell.getValue(), i + "");
+        d.setString("decision_table$.decision_table.default_row[%].name", ruleIdCell.getColumnName(), i + "");
+        d.setString("decision_table$.decision_table.default_row[%].value", ruleIdCell.getValue(), i + "");
         i++;
       }
 
       DTCell commentsCell = row.getCommentsCell();
       if (commentsCell != null) {
-        d.setString("$.decision_table.default_row[%].name", commentsCell.getColumnName(), i + "");
-        d.setString("$.decision_table.default_row[%].value", commentsCell.getValue(), i + "");
+        d.setString("decision_table$.decision_table.default_row[%].name", commentsCell.getColumnName(), i + "");
+        d.setString("decision_table$.decision_table.default_row[%].value", commentsCell.getValue(), i + "");
         i++;
       }
 
       List<DTCell> retCells = row.getRetDTCellsAsList();
       for (DTCell cell : retCells) {
-        d.setString("$.decision_table.default_row[%].name", cell.getColumnName(), i + "");
-        d.setString("$.decision_table.default_row[%].value", cell.getValue(), i + "");
+        d.setString("decision_table$.decision_table.default_row[%].name", cell.getColumnName(), i + "");
+        d.setString("decision_table$.decision_table.default_row[%].value", cell.getValue(), i + "");
         i++;
       }
     }

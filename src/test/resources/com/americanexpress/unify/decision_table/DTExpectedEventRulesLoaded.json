@@ -2,7 +2,7 @@
   "decision_table_event": {
     "system_name": "Test",
     "event_name": "RULES_LOADED",
-    "table_name": "/decision_table/DTTestEvent.json",
+    "table_name": "/com/americanexpress/unify/decision_table/DTTestEvent.json",
     "table_size": 5,
     "rules": [
       {

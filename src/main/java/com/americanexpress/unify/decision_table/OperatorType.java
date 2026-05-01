@@ -32,7 +32,8 @@ enum OperatorType {
   NOT_ALL_CONTAINED_IN("NOT_ALL_CONTAINED_IN"),
   CONTAINS_ALL("CONTAINS_ALL"),
   NOT_CONTAINS_ALL("NOT_CONTAINS_ALL"),
-  ALL_EQUAL("ALL_EQUAL");
+  ALL_EQUAL("ALL_EQUAL"),
+  MATCHES_REGEX("MATCHES_REGEX");
 
   private String opr = null;
 
@@ -107,6 +108,10 @@ enum OperatorType {
 
       case "ALL_EQUAL":
         opr = ALL_EQUAL;
+        break;
+
+      case "MATCHES_REGEX":
+        opr = MATCHES_REGEX;
         break;
 
       default:

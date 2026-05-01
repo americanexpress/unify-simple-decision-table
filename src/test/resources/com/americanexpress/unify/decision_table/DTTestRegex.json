@@ -1,0 +1,217 @@
+{
+  "decision_table": {
+    "version": "1",
+    "match_policy": "first_match",
+    "no_match_policy": "return_default",
+    "cols": [
+      {
+        "name": "rule_id",
+        "type": "rule_id",
+        "data_type": "string"
+      },
+      {
+        "name": "c_long",
+        "type": "evaluate",
+        "data_type": "long"
+      },
+      {
+        "name": "c_int",
+        "type": "evaluate",
+        "data_type": "integer"
+      },
+      {
+        "name": "c_double",
+        "type": "evaluate",
+        "data_type": "double"
+      },
+      {
+        "name": "c_decimal",
+        "type": "evaluate",
+        "data_type": "bigdecimal"
+      },
+      {
+        "name": "c_string",
+        "type": "evaluate",
+        "data_type": "string"
+      },
+      {
+        "name": "value",
+        "type": "return",
+        "data_type": "string"
+      }
+    ],
+    "rows": [
+      {
+        "cols": [
+          {
+            "name": "rule_id",
+            "value": "rule_1"
+          },
+          {
+            "name": "c_long",
+            "value": "MATCHES_REGEX ^9001$"
+          },
+          {
+            "name": "c_int",
+            "value": ""
+          },
+          {
+            "name": "c_double",
+            "value": ""
+          },
+          {
+            "name": "c_decimal",
+            "value": ""
+          },
+          {
+            "name": "c_string",
+            "value": ""
+          },
+          {
+            "name": "value",
+            "value": "long"
+          }
+        ]
+      },
+      {
+        "cols": [
+          {
+            "name": "rule_id",
+            "value": "rule_2"
+          },
+          {
+            "name": "c_long",
+            "value": ""
+          },
+          {
+            "name": "c_int",
+            "value": "MATCHES_REGEX ^7$"
+          },
+          {
+            "name": "c_double",
+            "value": ""
+          },
+          {
+            "name": "c_decimal",
+            "value": ""
+          },
+          {
+            "name": "c_string",
+            "value": ""
+          },
+          {
+            "name": "value",
+            "value": "integer"
+          }
+        ]
+      },
+      {
+        "cols": [
+          {
+            "name": "rule_id",
+            "value": "rule_3"
+          },
+          {
+            "name": "c_long",
+            "value": ""
+          },
+          {
+            "name": "c_int",
+            "value": ""
+          },
+          {
+            "name": "c_double",
+            "value": "MATCHES_REGEX ^12\\.0$"
+          },
+          {
+            "name": "c_decimal",
+            "value": ""
+          },
+          {
+            "name": "c_string",
+            "value": ""
+          },
+          {
+            "name": "value",
+            "value": "double"
+          }
+        ]
+      },
+      {
+        "cols": [
+          {
+            "name": "rule_id",
+            "value": "rule_4"
+          },
+          {
+            "name": "c_long",
+            "value": ""
+          },
+          {
+            "name": "c_int",
+            "value": ""
+          },
+          {
+            "name": "c_double",
+            "value": ""
+          },
+          {
+            "name": "c_decimal",
+            "value": "MATCHES_REGEX ^45\\.670$"
+          },
+          {
+            "name": "c_string",
+            "value": ""
+          },
+          {
+            "name": "value",
+            "value": "bigdecimal"
+          }
+        ]
+      },
+      {
+        "cols": [
+          {
+            "name": "rule_id",
+            "value": "rule_5"
+          },
+          {
+            "name": "c_long",
+            "value": ""
+          },
+          {
+            "name": "c_int",
+            "value": ""
+          },
+          {
+            "name": "c_double",
+            "value": ""
+          },
+          {
+            "name": "c_decimal",
+            "value": ""
+          },
+          {
+            "name": "c_string",
+            "value": "MATCHES_REGEX ^AB[0-9]{2}$"
+          },
+          {
+            "name": "value",
+            "value": "string"
+          }
+        ]
+      }
+    ],
+    "default_row": [
+      {
+        "name": "rule_id",
+        "value": "rule_default"
+      },
+      {
+        "name": "value",
+        "value": "default"
+      }
+    ]
+  }
+}
+

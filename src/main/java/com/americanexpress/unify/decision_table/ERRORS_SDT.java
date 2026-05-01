@@ -12,7 +12,9 @@
  * the License.
  */
 
-package com.americanexpress.unify.base;
+package com.americanexpress.unify.decision_table;
+
+import com.americanexpress.unify.base.ErrorMap;
 
 import java.util.Map;
 
@@ -54,6 +56,7 @@ public class ERRORS_SDT extends ErrorMap {
     map.put("sdt_err_47", "Unknown column in row index -> {0}, col name -> {1}, file -> {2}");
     map.put("sdt_err_48", "Row does not contain all columns defined, row index -> {0}, file -> {1}");
     map.put("sdt_err_49", "Row does not contain all return, rule_id or comments columns, row index -> {0}, file -> {1}");
+    map.put("sdt_err_50", "JDocument is not initialized. Please initialize the underlying JDocument library before initializing the decision table");
   }
 
 }

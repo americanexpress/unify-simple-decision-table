@@ -14,6 +14,7 @@
 
 package com.americanexpress.unify.decision_table;
 
+import com.americanexpress.unify.jdocs.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -32,6 +33,10 @@ class DecisionTableTest {
 
   @BeforeAll
   static void beforeAll() {
+    JDocument.init(new Initializer());
+    JDocument.configure(new Configurator()
+                                .ignoreDocTypePrefixForBaseDocs(true)
+                                .docTypePrefixPolicy(new DocTypePrefixPolicyEnforceForAll()));
     DecisionTable.init("", null);
   }
 
@@ -40,7 +45,7 @@ class DecisionTableTest {
     try {
       Configuration conf = new Configuration().setEventHandler(new TestHandler());
       DecisionTable.init("Test", conf);
-      DecisionTable dt = DecisionTable.fromJson("/decision_table/DTTestEvent.json");
+      DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTestEvent.json");
 
       Map<String, String> values = new HashMap<>();
       values.put("score", "90");
@@ -63,7 +68,7 @@ class DecisionTableTest {
     try {
       Configuration conf = new Configuration().setEventHandler(new TestHandler());
       DecisionTable.init("Test", conf);
-      DecisionTable dt = DecisionTable.fromJson("/decision_table/DTTestEvent1.json");
+      DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTestEvent1.json");
 
       Map<String, String> values = new HashMap<>();
       values.put("score", "90");
@@ -82,7 +87,7 @@ class DecisionTableTest {
 
   @Test
   void test2() {
-    DecisionTable dt = DecisionTable.fromJson("/decision_table/DTTest1.json");
+    DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTest1.json");
 
     Map<String, String> values = new HashMap<>();
     values.put("score", "90");
@@ -98,7 +103,7 @@ class DecisionTableTest {
 
   @Test
   void test3() {
-    DecisionTable dt = DecisionTable.fromJson("/decision_table/DTTest1.json");
+    DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTest1.json");
 
     Map<String, String> values = new HashMap<>();
     values.put("score", "45");
@@ -118,7 +123,7 @@ class DecisionTableTest {
     allowedList.add(Integer.class);
     Configuration conf = new Configuration().setAllowedClasses(allowedList);
     DecisionTable.init("", conf);
-    DecisionTable dt = DecisionTable.fromJson("/decision_table/DTTestJexl.json");
+    DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTestJexl.json");
 
     Map<String, String> values = new HashMap<>();
     values.put("score", "1");
@@ -135,7 +140,7 @@ class DecisionTableTest {
     allowedList.add(Long.class);
     Configuration conf = new Configuration().setAllowedClasses(allowedList);
     DecisionTable.init("", conf);
-    DecisionTable dt = DecisionTable.fromJson("/decision_table/DTTestJexl.json");
+    DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTestJexl.json");
 
     Map<String, String> values = new HashMap<>();
     values.put("score", "2");
@@ -151,7 +156,7 @@ class DecisionTableTest {
     List<Class<?>> allowedList = new ArrayList<>();
     Configuration conf = new Configuration().setAllowedClasses(allowedList);
     DecisionTable.init("", conf);
-    DecisionTable dt = DecisionTable.fromJson("/decision_table/DTTestJexl.json");
+    DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTestJexl.json");
 
     Map<String, String> values = new HashMap<>();
     values.put("score", "3");
@@ -168,7 +173,7 @@ class DecisionTableTest {
 
   @Test
   void testInvokable() {
-    DecisionTable dt = DecisionTable.fromJson("/decision_table/DTTest2.json");
+    DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTest2.json");
     Map<String, String> values = new HashMap<>();
     List<MatchedRow> list = dt.evaluate(values);
     assertEquals("480", list.get(0).get("phone").getString());
@@ -183,7 +188,7 @@ class DecisionTableTest {
 
   @Test
   void testInOperator() {
-    DecisionTable dt = DecisionTable.fromJson("/decision_table/DTTest3.json");
+    DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTest3.json");
 
     Map<String, String> values = new HashMap<>();
     values.put("code", "4GG");
@@ -202,7 +207,7 @@ class DecisionTableTest {
 
   @Test
   void testDefaultRow() {
-    DecisionTable dt = DecisionTable.fromJson("/decision_table/DTTest5.json");
+    DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTest5.json");
 
     Map<String, String> values = new HashMap<>();
     values.put("code", "4GGZZZ");
@@ -214,7 +219,7 @@ class DecisionTableTest {
 
   @Test
   void test8() {
-    DecisionTable dt = DecisionTable.fromJson("/decision_table/DTTest6.json");
+    DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTest6.json");
 
     Map<String, String> values = new HashMap<>();
     values.put("code", "4GG, 5FF");
@@ -226,7 +231,7 @@ class DecisionTableTest {
 
   @Test
   void test9() {
-    DecisionTable dt = DecisionTable.fromJson("/decision_table/DTTest7.json");
+    DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTest7.json");
 
     Map<String, String> values = new HashMap<>();
     values.put("code", "4GG, 5FF");
@@ -245,7 +250,7 @@ class DecisionTableTest {
 
   @Test
   void test10() {
-    DecisionTable dt = DecisionTable.fromJson("/decision_table/DTTest8.json");
+    DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTest8.json");
 
     Map<String, String> values = new HashMap<>();
     values.put("code1", "CR, CV, CL, CI , CE");
@@ -256,7 +261,7 @@ class DecisionTableTest {
 
   @Test
   void testNotAnyIn() {
-    DecisionTable dt = DecisionTable.fromJson("/decision_table/DTTest9.json");
+    DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTest9.json");
 
     Map<String, String> values = new HashMap<>();
     values.put("code1", "1, 7, 8");
@@ -274,7 +279,7 @@ class DecisionTableTest {
 
   @Test
   void testNotAllIn() {
-    DecisionTable dt = DecisionTable.fromJson("/decision_table/DTTest10.json");
+    DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTest10.json");
 
     Map<String, String> values = new HashMap<>();
     values.put("code1", "1, 7, 2");
@@ -288,7 +293,7 @@ class DecisionTableTest {
 
   @Test
   void testAllEqualString() {
-    DecisionTable dt = DecisionTable.fromJson("/decision_table/DTTest11.json");
+    DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTest11.json");
 
     Map<String, String> values = new HashMap<>();
     values.put("code1", "1, 2");
@@ -310,7 +315,7 @@ class DecisionTableTest {
 
   @Test
   void testAllEqualLong() {
-    DecisionTable dt = DecisionTable.fromJson("/decision_table/DTTest12.json");
+    DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTest12.json");
 
     Map<String, String> values = new HashMap<>();
     values.put("code1", "100, 200");
@@ -332,7 +337,7 @@ class DecisionTableTest {
 
   @Test
   void testContainsAllString() {
-    DecisionTable dt = DecisionTable.fromJson("/decision_table/DTTest13.json");
+    DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTest13.json");
 
     Map<String, String> values = new HashMap<>();
     values.put("code1", "1, 2, 3, 4");
@@ -355,7 +360,7 @@ class DecisionTableTest {
   @Test
   void testMissingCols() {
     try {
-      DecisionTable.fromJson("/decision_table/DTTest15.json");
+      DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTest15.json");
       fail();
     }
     catch (Exception e) {
@@ -368,7 +373,7 @@ class DecisionTableTest {
   void testLenient() {
     try {
       DecisionTable.init("Test", null);
-      DecisionTable dt = DecisionTable.fromJson("/decision_table/DTTest14.json");
+      DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTest14.json");
 
       Map<String, String> values = new HashMap<>();
       values.put("code1", "1");
@@ -387,7 +392,7 @@ class DecisionTableTest {
     try {
       Configuration conf = new Configuration().setEventHandler(new TestHandler1());
       DecisionTable.init("Test", conf);
-      DecisionTable dt = DecisionTable.fromJson("/decision_table/DTTestTemp.json");
+      DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTestTemp.json");
 
       Map<String, String> values = new HashMap<>();
       values.put("ecol1", "CR");
@@ -416,7 +421,7 @@ class DecisionTableTest {
 
   @Test
   void testScenariosEq() {
-    DecisionTable dt = DecisionTable.fromExcel("/decision_table/DTTestScenariosEq.xlsx");
+    DecisionTable dt = DecisionTable.fromExcel("/com/americanexpress/unify/decision_table/DTTestScenariosEq.xlsx");
 
     Map<String, String> values = new HashMap<>();
     values.put("code", "c1");
@@ -449,7 +454,7 @@ class DecisionTableTest {
 
   @Test
   void testScenariosGt() {
-    DecisionTable dt = DecisionTable.fromExcel("/decision_table/DTTestScenariosGt.xlsx");
+    DecisionTable dt = DecisionTable.fromExcel("/com/americanexpress/unify/decision_table/DTTestScenariosGt.xlsx");
 
     String value;
 
@@ -500,7 +505,7 @@ class DecisionTableTest {
 
   @Test
   void testScenariosGteq() {
-    DecisionTable dt = DecisionTable.fromExcel("/decision_table/DTTestScenariosGteq.xlsx");
+    DecisionTable dt = DecisionTable.fromExcel("/com/americanexpress/unify/decision_table/DTTestScenariosGteq.xlsx");
 
     String value;
 
@@ -551,7 +556,7 @@ class DecisionTableTest {
 
   @Test
   void testScenariosLteq() {
-    DecisionTable dt = DecisionTable.fromExcel("/decision_table/DTTestScenariosLteq.xlsx");
+    DecisionTable dt = DecisionTable.fromExcel("/com/americanexpress/unify/decision_table/DTTestScenariosLteq.xlsx");
 
     String value;
 
@@ -602,7 +607,7 @@ class DecisionTableTest {
 
   @Test
   void testScenariosNoteq() {
-    DecisionTable dt = DecisionTable.fromExcel("/decision_table/DTTestScenariosNoteq.xlsx");
+    DecisionTable dt = DecisionTable.fromExcel("/com/americanexpress/unify/decision_table/DTTestScenariosNoteq.xlsx");
 
     String value;
 
@@ -653,7 +658,7 @@ class DecisionTableTest {
 
   @Test
   void testScenariosIn() {
-    DecisionTable dt = DecisionTable.fromExcel("/decision_table/DTTestScenariosIn.xlsx");
+    DecisionTable dt = DecisionTable.fromExcel("/com/americanexpress/unify/decision_table/DTTestScenariosIn.xlsx");
 
     String value;
 
@@ -705,7 +710,7 @@ class DecisionTableTest {
 
   @Test
   void testScenariosNotIn() {
-    DecisionTable dt = DecisionTable.fromExcel("/decision_table/DTTestScenariosNotIn.xlsx");
+    DecisionTable dt = DecisionTable.fromExcel("/com/americanexpress/unify/decision_table/DTTestScenariosNotIn.xlsx");
 
     String value;
 
@@ -757,7 +762,7 @@ class DecisionTableTest {
 
   @Test
   void testScenariosAnyContainedIn() {
-    DecisionTable dt = DecisionTable.fromExcel("/decision_table/DTTestScenariosAnyContainedIn.xlsx");
+    DecisionTable dt = DecisionTable.fromExcel("/com/americanexpress/unify/decision_table/DTTestScenariosAnyContainedIn.xlsx");
 
     String value;
 
@@ -809,7 +814,7 @@ class DecisionTableTest {
 
   @Test
   void testScenariosNotAnyContainedIn() {
-    DecisionTable dt = DecisionTable.fromExcel("/decision_table/DTTestScenariosNotAnyContainedIn.xlsx");
+    DecisionTable dt = DecisionTable.fromExcel("/com/americanexpress/unify/decision_table/DTTestScenariosNotAnyContainedIn.xlsx");
 
     String value;
 
@@ -861,7 +866,7 @@ class DecisionTableTest {
 
   @Test
   void testScenariosAllContainedIn() {
-    DecisionTable dt = DecisionTable.fromExcel("/decision_table/DTTestScenariosAllContainedIn.xlsx");
+    DecisionTable dt = DecisionTable.fromExcel("/com/americanexpress/unify/decision_table/DTTestScenariosAllContainedIn.xlsx");
 
     String value;
 
@@ -913,7 +918,7 @@ class DecisionTableTest {
 
   @Test
   void testScenariosNotAllContainedIn() {
-    DecisionTable dt = DecisionTable.fromExcel("/decision_table/DTTestScenariosNotAllContainedIn.xlsx");
+    DecisionTable dt = DecisionTable.fromExcel("/com/americanexpress/unify/decision_table/DTTestScenariosNotAllContainedIn.xlsx");
 
     String value;
 
@@ -962,7 +967,7 @@ class DecisionTableTest {
 
   @Test
   void testScenariosContainsAll() {
-    DecisionTable dt = DecisionTable.fromExcel("/decision_table/DTTestScenariosContainsAll.xlsx");
+    DecisionTable dt = DecisionTable.fromExcel("/com/americanexpress/unify/decision_table/DTTestScenariosContainsAll.xlsx");
 
     String value;
 
@@ -1011,7 +1016,7 @@ class DecisionTableTest {
 
   @Test
   void testScenariosNotContainsAll() {
-    DecisionTable dt = DecisionTable.fromExcel("/decision_table/DTTestScenariosNotContainsAll.xlsx");
+    DecisionTable dt = DecisionTable.fromExcel("/com/americanexpress/unify/decision_table/DTTestScenariosNotContainsAll.xlsx");
 
     String value;
 
@@ -1060,7 +1065,7 @@ class DecisionTableTest {
 
   @Test
   void testScenariosAllEquals() {
-    DecisionTable dt = DecisionTable.fromExcel("/decision_table/DTTestScenariosAllEqual.xlsx");
+    DecisionTable dt = DecisionTable.fromExcel("/com/americanexpress/unify/decision_table/DTTestScenariosAllEqual.xlsx");
 
     String value;
 
@@ -1109,7 +1114,7 @@ class DecisionTableTest {
 
   @Test
   void testExcel1() {
-    DecisionTable dt = DecisionTable.fromExcel("/decision_table/DTTest1.xlsx");
+    DecisionTable dt = DecisionTable.fromExcel("/com/americanexpress/unify/decision_table/DTTest1.xlsx");
 
     Map<String, String> values = new HashMap<>();
     values.put("score", "100");
@@ -1144,7 +1149,7 @@ class DecisionTableTest {
 
   @Test
   void testExcel4() {
-    DecisionTable dt = DecisionTable.fromExcel("/decision_table/DTTest2.xlsx");
+    DecisionTable dt = DecisionTable.fromExcel("/com/americanexpress/unify/decision_table/DTTest2.xlsx");
 
     Map<String, String> values = new HashMap<>();
     values.put("logo", "L1");
@@ -1157,7 +1162,7 @@ class DecisionTableTest {
   void testExcelToJson() {
     try {
       ExcelReader er = new ExcelReader();
-      er.loadDecisionTableFromResourcePath("/decision_table/DTTest1.xlsx");
+      er.loadDecisionTableFromResourcePath("/com/americanexpress/unify/decision_table/DTTest1.xlsx");
       er.getJson();
     }
     catch (Exception e) {
@@ -1180,6 +1185,63 @@ class DecisionTableTest {
     assertEquals("c,c", tv[0]);
     assertEquals("c3", tv[1]);
     assertEquals("c\\1", tv[2]);
+  }
+
+  @Test
+  public void testMatchesRegexOperator() {
+    DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTestRegex.json");
+
+    Map<String, String> values = new HashMap<>();
+    values.put("c_long", "9001");
+    List<MatchedRow> list = dt.evaluate(values);
+    assertEquals("long", list.get(0).get("value").getString());
+    values.clear();
+
+    values.put("c_int", "7");
+    list = dt.evaluate(values);
+    assertEquals("integer", list.get(0).get("value").getString());
+    values.clear();
+
+    values.put("c_double", "12.0");
+    list = dt.evaluate(values);
+    assertEquals("double", list.get(0).get("value").getString());
+    values.clear();
+
+    values.put("c_decimal", "45.670");
+    list = dt.evaluate(values);
+    assertEquals("bigdecimal", list.get(0).get("value").getString());
+    values.clear();
+
+    values.put("c_string", "AB12");
+    list = dt.evaluate(values);
+    assertEquals("string", list.get(0).get("value").getString());
+    values.clear();
+
+    // now we run negative test cases
+    values.put("c_long", "900");
+    list = dt.evaluate(values);
+    assertEquals("default", list.get(0).get("value").getString());
+    values.clear();
+
+    values.put("c_int", "70");
+    list = dt.evaluate(values);
+    assertEquals("default", list.get(0).get("value").getString());
+    values.clear();
+
+    values.put("c_double", "12.1");
+    list = dt.evaluate(values);
+    assertEquals("default", list.get(0).get("value").getString());
+    values.clear();
+
+    values.put("c_decimal", "45.67");
+    list = dt.evaluate(values);
+    assertEquals("default", list.get(0).get("value").getString());
+    values.clear();
+
+    values.put("c_string", "AC12");
+    list = dt.evaluate(values);
+    assertEquals("default", list.get(0).get("value").getString());
+
   }
 
 }
