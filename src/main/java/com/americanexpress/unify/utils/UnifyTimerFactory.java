@@ -14,34 +14,33 @@
 
 package com.americanexpress.unify.utils;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-/*
- * @author Deepak Arora
- */
-public final class UnifyTimer {
+public class UnifyTimerFactory {
 
-  private Timer timer = null;
+  private static Map<String, UnifyTimer> timerMap = new ConcurrentHashMap<>();
 
-  void close() {
-    timer.cancel();
-    timer.purge();
-    timer = null;
+  public static UnifyTimer create(String timerName) {
+    UnifyTimer t = timerMap.get(timerName);
+    if (t != null) {
+      t.close();
+    }
+    t = new UnifyTimer(timerName);
+    timerMap.put(timerName, t);
+    return t;
   }
 
-  UnifyTimer(String timerName) {
-    timer = new Timer(timerName, true);
+  public static UnifyTimer instanceOf(String timerName) {
+    return timerMap.get(timerName);
   }
 
-  // this is a recurring timer
-  public void start(TimerTask task, long delay, long interval) {
-    timer.schedule(task, delay, interval);
-  }
-
-  // this is a one-off timer
-  public void start(TimerTask task, long delay) {
-    timer.schedule(task, delay);
+  public static void close(String timerName) {
+    UnifyTimer t = timerMap.get(timerName);
+    if (t != null) {
+      t.close();
+      timerMap.remove(timerName);
+    }
   }
 
 }

@@ -15,7 +15,6 @@
 package com.americanexpress.unify.decision_table;
 
 import com.americanexpress.unify.base.BaseUtils;
-import com.americanexpress.unify.base.ERRORS_SDT;
 import com.americanexpress.unify.base.ErrorTuple;
 import com.americanexpress.unify.base.UnifyException;
 import com.americanexpress.unify.jdocs.Document;
@@ -75,6 +74,11 @@ public final class DecisionTable {
   }
 
   public static void init(String systemName, Configuration conf) {
+    // check if underlying library is not initialized
+    if (JDocument.isInitialized() == false) {
+      throw new UnifyException("sdt_err_50");
+    }
+
     IdleExpiryCacheFactory.clear(getCacheName("decision_table_cache"));
     IdleExpiryCacheFactory.clear(getCacheName("decision_table_invokable_cache"));
     IdleExpiryCacheFactory.clear(getCacheName("decision_table_jexl_cache"));
@@ -89,9 +93,9 @@ public final class DecisionTable {
     // init event handler
     DecisionTable.eventHandler = conf.eventHandler;
     if (DecisionTable.eventHandler != null) {
-      String json = BaseUtils.getResourceAsString(DecisionTable.class, "/decision_table/decision_table_event_match_fired.json");
+      String json = BaseUtils.getResourceAsString(DecisionTable.class, "/com/americanexpress/unify/decision_table/decision_table_event_match_fired.json");
       JDocument.loadDocumentModel("decision_table_event_match_fired", json);
-      json = BaseUtils.getResourceAsString(DecisionTable.class, "/decision_table/decision_table_event_rules_loaded.json");
+      json = BaseUtils.getResourceAsString(DecisionTable.class, "/com/americanexpress/unify/decision_table/decision_table_event_rules_loaded.json");
       JDocument.loadDocumentModel("decision_table_event_rules_loaded", json);
     }
 
@@ -133,6 +137,12 @@ public final class DecisionTable {
     IdleExpiryCacheFactory.close(getCacheName("decision_table_jexl_cache"));
   }
 
+  public static void validate(String name, String json) {
+    // try loading the decision table
+    // will throw an exception is the decisiont able is not valid
+    new JsonReader().getDecisionTableFromJson(name, json);
+  }
+
   public static DecisionTable fromJson(String resourcePath) {
     IdleExpiryCache<DecisionTable> cache = IdleExpiryCacheFactory.instanceOf(getCacheName("decision_table_cache"));
     DecisionTable dt = cache.get(resourcePath);
@@ -143,6 +153,27 @@ public final class DecisionTable {
         if (dt == null) {
           dt = new JsonReader().loadDecisionTableFromResourcePath(resourcePath);
           cache.put(resourcePath, dt);
+          dt.invokeEventHandler(EventType.RULES_LOADED);
+        }
+      }
+      finally {
+        rlock.unlock();
+      }
+    }
+
+    return dt;
+  }
+
+  public static DecisionTable fromJson(String decisionTableName, String json) {
+    IdleExpiryCache<DecisionTable> cache = IdleExpiryCacheFactory.instanceOf(getCacheName("decision_table_cache"));
+    DecisionTable dt = cache.get(decisionTableName);
+    if (dt == null) {
+      try {
+        rlock.lock();
+        dt = cache.get(decisionTableName);
+        if (dt == null) {
+          dt = new JsonReader().getDecisionTableFromJson(decisionTableName, json);
+          cache.put(decisionTableName, dt);
           dt.invokeEventHandler(EventType.RULES_LOADED);
         }
       }
@@ -295,11 +326,11 @@ public final class DecisionTable {
 
   private Document getMatchFiredEvent(Map<String, String> values, List<MatchedRow> listOfResults) {
     Document d = new JDocument("decision_table_event_match_fired", null);
-    d.setString("$.decision_table_event.system_name", systemName);
-    d.setString("$.decision_table_event.event_name", EventType.MATCH_FIRED.toString());
-    d.setString("$.decision_table_event.table_name", name);
-    d.setInteger("$.decision_table_event.table_size", dtRows.size());
-    d.setString("$.decision_table_event.timestamp", BaseUtils.fromInstant(Instant.now(), UTC_TS_FMT, "UTC"));
+    d.setString("decision_table_event_match_fired$.decision_table_event.system_name", systemName);
+    d.setString("decision_table_event_match_fired$.decision_table_event.event_name", EventType.MATCH_FIRED.toString());
+    d.setString("decision_table_event_match_fired$.decision_table_event.table_name", name);
+    d.setInteger("decision_table_event_match_fired$.decision_table_event.table_size", dtRows.size());
+    d.setString("decision_table_event_match_fired$.decision_table_event.timestamp", BaseUtils.fromInstant(Instant.now(), UTC_TS_FMT, "UTC"));
 
     {
       // set input values
@@ -311,9 +342,9 @@ public final class DecisionTable {
           // this is a safety check as people may pass in a value which is not a column in the decision table
           continue;
         }
-        d.setString("$.decision_table_event.input[%].col_name", key, index + "");
-        d.setString("$.decision_table_event.input[%].col_type", evalColumns.get(key).getDataType().toString(), index + "");
-        d.setString("$.decision_table_event.input[%].value", values.get(key), index + "");
+        d.setString("decision_table_event_match_fired$.decision_table_event.input[%].col_name", key, index + "");
+        d.setString("decision_table_event_match_fired$.decision_table_event.input[%].col_type", evalColumns.get(key).getDataType().toString(), index + "");
+        d.setString("decision_table_event_match_fired$.decision_table_event.input[%].value", values.get(key), index + "");
         index++;
       }
     }
@@ -322,20 +353,20 @@ public final class DecisionTable {
       // set matched rows
       for (int i = 0; i < listOfResults.size(); i++) {
         MatchedRow r = listOfResults.get(i);
-        d.setString("$.decision_table_event.result[%].rule_id", r.getRuleId(), i + "");
-        d.setString("$.decision_table_event.result[%].comments", r.getComments(), i + "");
-        d.setInteger("$.decision_table_event.result[%].row_num", r.getRowNum(), i + "");
+        d.setString("decision_table_event_match_fired$.decision_table_event.result[%].rule_id", r.getRuleId(), i + "");
+        d.setString("decision_table_event_match_fired$.decision_table_event.result[%].comments", r.getComments(), i + "");
+        d.setInteger("decision_table_event_match_fired$.decision_table_event.result[%].row_num", r.getRowNum(), i + "");
         List<String> keys = getSortedList(r.getMap());
         int index = 0;
         for (String key : keys) {
-          d.setString("$.decision_table_event.result[%].values[%].col_name", key, i + "", index + "");
-          d.setString("$.decision_table_event.result[%].values[%].col_type", retColumns.get(key).getDataType().toString(), i + "", index + "");
+          d.setString("decision_table_event_match_fired$.decision_table_event.result[%].values[%].col_name", key, i + "", index + "");
+          d.setString("decision_table_event_match_fired$.decision_table_event.result[%].values[%].col_type", retColumns.get(key).getDataType().toString(), i + "", index + "");
           Object value = r.get(key).getValue();
           if (value == null) {
-            d.setString("$.decision_table_event.result[%].values[%].value", null, i + "", index + "");
+            d.setString("decision_table_event_match_fired$.decision_table_event.result[%].values[%].value", null, i + "", index + "");
           }
           else {
-            d.setString("$.decision_table_event.result[%].values[%].value", value.toString(), i + "", index + "");
+            d.setString("decision_table_event_match_fired$.decision_table_event.result[%].values[%].value", value.toString(), i + "", index + "");
           }
           index++;
         }
@@ -347,14 +378,14 @@ public final class DecisionTable {
 
   public Document getRulesLoadedEvent() {
     Document d = new JDocument("decision_table_event_rules_loaded", null);
-    d.setString("$.decision_table_event.system_name", systemName);
-    d.setString("$.decision_table_event.event_name", EventType.RULES_LOADED.toString());
-    d.setString("$.decision_table_event.table_name", name);
+    d.setString("decision_table_event_rules_loaded$.decision_table_event.system_name", systemName);
+    d.setString("decision_table_event_rules_loaded$.decision_table_event.event_name", EventType.RULES_LOADED.toString());
+    d.setString("decision_table_event_rules_loaded$.decision_table_event.table_name", name);
 
     int size = (noMatchPolicy == NoMatchPolicy.RETURN_DEFAULT) ? dtRows.size() : dtRows.size() - 1;
 
-    d.setInteger("$.decision_table_event.table_size", size);
-    d.setString("$.decision_table_event.timestamp", BaseUtils.fromInstant(Instant.now(), UTC_TS_FMT, "UTC"));
+    d.setInteger("decision_table_event_rules_loaded$.decision_table_event.table_size", size);
+    d.setString("decision_table_event_rules_loaded$.decision_table_event.timestamp", BaseUtils.fromInstant(Instant.now(), UTC_TS_FMT, "UTC"));
 
     {
       for (int i = 0; i < size; i++) {
@@ -368,8 +399,8 @@ public final class DecisionTable {
         DTCell commentsCell = row.getCommentsCell();
         String comments = (commentsCell == null) ? "" : commentsCell.getValue();
 
-        d.setString("$.decision_table_event.rules[%].rule_id", ruleId, i + "");
-        d.setString("$.decision_table_event.rules[%].comments", comments, i + "");
+        d.setString("decision_table_event_rules_loaded$.decision_table_event.rules[%].rule_id", ruleId, i + "");
+        d.setString("decision_table_event_rules_loaded$.decision_table_event.rules[%].comments", comments, i + "");
       }
     }
 
@@ -908,6 +939,12 @@ public final class DecisionTable {
         }
         break;
 
+        case MATCHES_REGEX: {
+          long val1 = Long.valueOf(value);
+          b = String.valueOf(val1).matches(c.getValue());
+        }
+        break;
+
         default: {
           long val1 = Long.parseLong(value);
           long val2 = 0;
@@ -1142,6 +1179,12 @@ public final class DecisionTable {
         }
         break;
 
+        case MATCHES_REGEX: {
+          double val1 = Double.valueOf(value);
+          b = String.valueOf(val1).matches(c.getValue());
+        }
+        break;
+
         default: {
           double val1 = Double.parseDouble(value);
           double val2 = 0;
@@ -1373,6 +1416,12 @@ public final class DecisionTable {
         }
         break;
 
+        case MATCHES_REGEX: {
+          BigDecimal val1 = new BigDecimal(value);
+          b = val1.toPlainString().matches(c.getValue());
+        }
+        break;
+
         default: {
           BigDecimal val1 = new BigDecimal(value);
           BigDecimal val2 = null;
@@ -1560,6 +1609,11 @@ public final class DecisionTable {
         }
         break;
 
+        case MATCHES_REGEX: {
+          b = value.matches(c.getValue());
+        }
+        break;
+
         default: {
           String val2 = null;
 
@@ -1652,6 +1706,7 @@ public final class DecisionTable {
       case LT:
       case GT_EQ:
       case LT_EQ:
+      case MATCHES_REGEX:
         // nothing to do as it does not make sense in the context of a boolean
         break;
 
@@ -1662,6 +1717,14 @@ public final class DecisionTable {
     return b;
   }
 
+  public String getName() {
+    return name;
+  }
+
+  public String getSystemName() {
+    return systemName;
+  }
+
   static String dedupeValue(String value, OperatorType oprType) {
     switch (oprType) {
       case EQ:
@@ -1670,6 +1733,7 @@ public final class DecisionTable {
       case LT:
       case GT_EQ:
       case LT_EQ:
+      case MATCHES_REGEX:
         // nothing to do
         break;
 

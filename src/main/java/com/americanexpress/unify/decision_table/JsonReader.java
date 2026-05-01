@@ -56,7 +56,7 @@ class JsonReader extends DecisionTableReader {
     Document d = new JDocument("decision_table", json);
 
     this.name = name;
-    version = d.getString("$.decision_table.version");
+    version = d.getString("decision_table$.decision_table.version");
     mp = getMatchPolicy(d);
     nmp = getNoMatchPolicy(d);
     rvp = getRowValidationPolicy(d);
@@ -99,18 +99,18 @@ class JsonReader extends DecisionTableReader {
   }
 
   private MatchPolicy getMatchPolicy(Document d) {
-    String val = d.getString("$.decision_table.match_policy");
+    String val = d.getString("decision_table$.decision_table.match_policy");
     return MatchPolicy.valueOf(val.toUpperCase());
   }
 
   private NoMatchPolicy getNoMatchPolicy(Document d) {
-    String val = d.getString("$.decision_table.no_match_policy");
+    String val = d.getString("decision_table$.decision_table.no_match_policy");
     return NoMatchPolicy.valueOf(val.toUpperCase());
   }
 
   private RowValidationPolicy getRowValidationPolicy(Document d) {
     RowValidationPolicy policy = null;
-    String val = d.getString("$.decision_table.row_validation_policy");
+    String val = d.getString("decision_table$.decision_table.row_validation_policy");
     if (val != null) {
       policy = RowValidationPolicy.valueOf(val.toUpperCase());
     }
@@ -119,13 +119,13 @@ class JsonReader extends DecisionTableReader {
 
   private ArrayList<DTColumn> getColumns(Document d) {
     ArrayList<DTColumn> cols = new ArrayList<>();
-    int size = d.getArraySize("$.decision_table.cols[]");
+    int size = d.getArraySize("decision_table$.decision_table.cols[]");
     boolean doesRuleIdColExist = false;
     boolean doesCommentsColExist = false;
     Set<String> colNames = new HashSet<>();
 
     for (int i = 0; i < size; i++) {
-      String name = d.getString("$.decision_table.cols[%].name", i + "");
+      String name = d.getString("decision_table$.decision_table.cols[%].name", i + "");
 
       // duplicate name validation
       if (colNames.contains(name) == true) {
@@ -133,8 +133,8 @@ class JsonReader extends DecisionTableReader {
       }
       colNames.add(name);
 
-      String type = d.getString("$.decision_table.cols[%].type", i + "");
-      String dataType = d.getString("$.decision_table.cols[%].data_type", i + "");
+      String type = d.getString("decision_table$.decision_table.cols[%].type", i + "");
+      String dataType = d.getString("decision_table$.decision_table.cols[%].data_type", i + "");
       ColumnType colType = ColumnType.valueOf(type.toUpperCase());
 
       // rule id col validation
@@ -171,12 +171,12 @@ class JsonReader extends DecisionTableReader {
     }
 
     ArrayList<DTRow> rows = new ArrayList<>();
-    int numRows = d.getArraySize("$.decision_table.rows[]");
+    int numRows = d.getArraySize("decision_table$.decision_table.rows[]");
     Set<String> ruleIdSet = new HashSet<>();
 
     for (int i = 0; i < numRows; i++) {
       DTRow row = new DTRow();
-      int numCols = d.getArraySize("$.decision_table.rows[%].cols[]", i + "");
+      int numCols = d.getArraySize("decision_table$.decision_table.rows[%].cols[]", i + "");
 
       // validate that number of cols should be equal to number of defined cols
       if (rvp == RowValidationPolicy.STRICT && numCols != cols.size()) {
@@ -191,8 +191,8 @@ class JsonReader extends DecisionTableReader {
 
       // for each column defined in the row
       for (int j = 0; j < numCols; j++) {
-        String name = d.getString("$.decision_table.rows[%].cols[%].name", i + "", j + "");
-        String value = d.getString("$.decision_table.rows[%].cols[%].value", i + "", j + "");
+        String name = d.getString("decision_table$.decision_table.rows[%].cols[%].name", i + "", j + "");
+        String value = d.getString("decision_table$.decision_table.rows[%].cols[%].value", i + "", j + "");
         OperatorType oprType = null;
 
         DTColumn dtCol = colsMap.get(name);
@@ -288,7 +288,7 @@ class JsonReader extends DecisionTableReader {
     DTRow row = new DTRow();
 
     // check that we should not have a default row with return none policy
-    if ((nmp == NoMatchPolicy.RETURN_NONE) && (d.pathExists("$.decision_table.default_row") == true)) {
+    if ((nmp == NoMatchPolicy.RETURN_NONE) && (d.pathExists("decision_table$.decision_table.default_row") == true)) {
       throw new UnifyException("sdt_err_44", super.name);
     }
 
@@ -300,10 +300,10 @@ class JsonReader extends DecisionTableReader {
     Set<String> colsSet = getNonEvalColsSet();
 
     // we have the return default policy
-    int numCols = d.getArraySize("$.decision_table.default_row[]");
+    int numCols = d.getArraySize("decision_table$.decision_table.default_row[]");
     for (int i = 0; i < numCols; i++) {
-      String name = d.getString("$.decision_table.default_row[%].name", i + "");
-      String value = d.getString("$.decision_table.default_row[%].value", i + "");
+      String name = d.getString("decision_table$.decision_table.default_row[%].name", i + "");
+      String value = d.getString("decision_table$.decision_table.default_row[%].value", i + "");
 
       DTColumn dtCol = colsMap.get(name);
 

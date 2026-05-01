@@ -96,7 +96,7 @@ public class JsonToExcel {
 
     try {
       // open the template workbook
-      try (InputStream is = JsonToExcel.class.getResourceAsStream("/decision_table/DecisionTableBlankTemplate.xlsx")) {
+      try (InputStream is = JsonToExcel.class.getResourceAsStream("/com/americanexpress/unify/decision_table/DecisionTableBlankTemplate.xlsx")) {
         wb = WorkbookFactory.create(is);
         sheet = wb.getSheet("Decision Table");
         sheetValues = wb.getSheet("Values");

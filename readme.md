@@ -2,7 +2,7 @@
 
 ---
 
-Unify Simple Decision Table is a simple and easy to use, Java based implementation of a decision table. Don't let its 
+Unify Simple Decision Table is a simple and easy to use, Java based implementation of a decision table. Don't let its
 simple and easy to use nature fool you - it is just about as powerful as can be - but thankfully no more!
 
 It provides the following high level functionality:
@@ -28,7 +28,7 @@ as source code and changes tracked. On the other hand, Excel based decision tabl
 for a non-technical person but the main disadvantage is that you cannot track
 changes using a diff tool. One way of working could be to start out with Excel based decision table
 and convert the same to JSON based once it has been set up and tested. Of course, once you get comfortable with JSON based tables,
-you could work with them directly. We provide a utility to convert an Excel decision table into a 
+you could work with them directly. We provide a utility to convert an Excel decision table into a
 JSON decision table.
 
 And while you are here, may we invite you to check out a couple of other related offerings which could be of interest:
@@ -47,15 +47,47 @@ If you like what you see, we would very much appreciate a like - it keeps us mot
 work is appreciated and helping people in the community.
 
 ### Getting the package
+
 Unify-simple-decision-table is available as a jar file in Maven central with the following Maven coordinates:
 
 ```pom
 <groupId>com.americanexpress.unify.simple_decision_table</groupId>
 <artifactId>unify-simple-decision-table</artifactId>
-<version>1.0.0</version>
+<version>2.0.0</version>
 ```
 
+---
+
+### Version 2.x.x release alert
+
+Version 2.x.x is an upgrade that contains the following:
+
+1. Bumped JDocs dependency which requires a breaking change and hence moving up to 2.x.x
+1. Throw an exception if JDocs library is not initialized
+2. Refactored package names to avoid potential conflicts with other libraries
+3. Added a stand-alone method to validate a decision table
+4. Added a new method to create a decision table from a JSON string
+6. Added a new operator MATCHES_REGEX
+7. Added a method to get the name of the decision table
+8. Added a methid to get the name of the system
+9. Updated test cases
+10. Added time expiry cache utility classes
+
+For migrating to 2.x.x, the only breaking change is the requirement to have the JDocument class initialized before initializing
+the decision table. This can be done by calling the method `JDocument.init` like below:
+
+`JDocument.init(new Initializer());`
+
+Note that the above initializes JDocument (unify-jdocs or JDocs) with default initialization and configuration values which
+should be sufficient for using the decision table. However, it may happen that the application wants to use or uses
+JDocs independently and may already have its own initialization and configuration for JDocs. In this case, we only need
+to ensure that the Jdocs initialization occurs before the decision table initialization in the application. Please refer to the
+JDocs link above to get to know more about initializing and configuring JDocs.
+
+---
+
 ### Prerequisites
+
 Unify-simple-decision-table works with Java 8 and later.
 
 Make sure that log4j configuration file is found in the class path. A sample file is provided in the test resources folder.
@@ -67,7 +99,7 @@ Make sure that log4j configuration file is found in the class path. A sample fil
 DecisionTable.init("my_app", null);
 
 // create a decision table from a JSON file from the resources folder
-DecisionTable dt = DecisionTable.fromJson("/decision_table/DTTest1.json");
+DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTest1.json");
 
 // create a map of input values to pass into the decision table. The first value specifies the column name in the decision
 // table and the second value specifies the input value for that column. Note that it is the client's responsibility to ensure
@@ -159,22 +191,41 @@ test files are provided - `DTTest1.xlxs` and `DTTest2.xlxs` in the test `resourc
 Excel based decision tables are loaded using the method `fromExcel` as below:
 
 ```java
-DecisionTable dt = DecisionTable.fromExcel("/decision_table/DTTest1.xlsx");
+DecisionTable dt = DecisionTable.fromExcel("/com/americanexpress/unify/decision_table/DTTest1.xlsx");
 ```
 
 ### Creating a JSON based decision table
 
-To create a JSON based decision table, one needs to adhere to the structure of a JSON decision table. The same is
+To create a JSON based decision table, one needs to adhere to the structure of a JSON decision table definition. The same is
 provided in the main `resources` folder under the name `decision_table.json`.
 
-JSON based decision tables are loaded using the method `fromJson` as below:
+JSON based decision tables are loaded using the method `fromJson`. They can either be loaded from a file in the resources
+folder or by providing the decision table definition as a JSON string.
+
+Decision tables loaded are assigned a name at the time of loading. This name is used internally to store decision
+tables in a cache for fast access.
+
+#### Loading a JSON decision table using a file from the `resources` folder
+
+In the snippet below, `DTTest1.json` is a file stored in the `resouces` folder in the path `/com/americanexpress/unify/decision_table`.
+```java
+DecisionTable dt = DecisionTable.fromJson("/com/americanexpress/unify/decision_table/DTTest1.json");
+```
+
+In the above scenario, the decision table name is set to the resource file path i.e. `/com/americanexpress/unify/decision_table/DTTest1.json`
+
+#### Loading a JSON decision table from a JSON string
+
+In this scenario, it is left upto the client to read the decision table definition as a JSON string and provide a decision table name.
+It is left to the clients to ensure that the decision table names used across the two methods are unique.
 
 ```java
-DecisionTable dt = DecisionTable.fromJson("/decision_table/DTTest1.json");
+String s = "{...}"; // string containing the decision table definition as a JSON string 
+DecisionTable dt = DecisionTable.fromJson("my_decision_table_name", s);
 ```
 
 Once the decision table is loaded, further steps to work with the decision table in Java code remain the same irrespective
-of whether it is an Excel based or a JSON based decision table.
+of whether it was loaded from an Excel or from JSON file / string.
 
 ### Break-down of a decision table
 
@@ -342,7 +393,7 @@ types in any order, but for better understanding, we recommend to first define a
 Decision table can have the following two types of columns:
 
 1. `evaluate` columns - these are the evaluation columns. The input values passed into the decision table consists of
-an input value for each such column. The input values are evaluated against the criteria specified in the cell for the column.
+   an input value for each such column. The input values are evaluated against the criteria specified in the cell for the column.
 2. `return` columns - these are the columns whose values are returned in case the evaluation columns are matched.
 
 This field is case-insensitive.
@@ -398,6 +449,7 @@ The following operator types can be specified in the evaluation criteria for eac
   CONTAINS_ALL
   NOT_CONTAINS_ALL
   ALL_EQUAL
+  MATCHES_REGEX
 ```
 We refer to the values that are passed into the decision table at run time (dynamically) by the program as input values.
 The values against which the input values are evaluated i.e. the values specified in the cells of the evaluation
@@ -576,6 +628,10 @@ Any spaces after and before the comma are ignored i.e. the values are trimmed.
 
 Evaluation values are deduplicated at the time of loading the decision table. Input values are deduplicated before evaluation.
 
+#### MATCHES_REGEX operator
+
+This operator evaluates the input value against a regex specified. Returns true if matched, else false.
+
 ### A note on NULL and empty values
 
 Please note the following while specifying values in evaluation or return cells:
@@ -631,7 +687,7 @@ public List<MatchedRow> evaluate(Map<String, String> values);
 public List<MatchedRow> evaluate(Map<String, String> values, Object input);
 ```
 
-The access to this Java object is only available to the external Java method specified in  evaluation or in return
+The access to this Java object is only available to the external Java method specified in evaluation or in return
 cells (explained in the next section).
 
 #### Invoking Java code from within decision table
@@ -747,7 +803,7 @@ This event is emitted when the decision table is loaded for the first time. A sa
   "decision_table_event": {
     "system_name": "Test",
     "event_name": "RULES_LOADED",
-    "table_name": "/decision_table/name.json",
+    "table_name": "/com/americanexpress/unify/decision_table/name.json",
     "table_size": 2,
     "rules": [
       {
@@ -779,7 +835,7 @@ This event is emitted for all matches encountered when the decision table is eva
   "decision_table_event": {
     "system_name": "Test",
     "event_name": "MATCH_FIRED",
-    "table_name": "/decision_table/name.json",
+    "table_name": "/com/americanexpress/unify/decision_table/name.json",
     "table_size": 2,
     "input": [
       {
@@ -841,15 +897,16 @@ In the `result` array, the following are the fields output:
 
 `row_num` - specifes the 1 index based row number of the matched row.
 
-`values` - an array that specifies the values of the return columns of the matched row. 
+`values` - an array that specifies the values of the return columns of the matched row.
 
 While capturing events in the application, it would be worth pointing out, that in heavily used systems, the number
 of events generated could be quite high. To address this, the application may need to create an implementation where either:
+
 1) a bounded queue is used to store events awaiting processing - in which case, events arriving at a time when the queue is full
-could be ignored
+   could be ignored
 2) or an unbounded queue is used to hold events - which introduces the risk of JVM going out of memory if the load is high and events
-are not being processed fast enough
-3) or a bounded blocking queue is used if the application is OK to wait till space is available in the queue 
+   are not being processed fast enough
+3) or a bounded blocking queue is used if the application is OK to wait till space is available in the queue
 
 ### What next?
 

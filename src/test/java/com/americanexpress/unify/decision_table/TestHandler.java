@@ -27,17 +27,24 @@ public class TestHandler implements EventHandler {
 
   @Override
   public void invoke(DecisionTable dt, EventType event, Document eventInfo) {
-    eventInfo.deletePath("$.decision_table_event.timestamp");
+    String name = null;
+    if (event == EventType.MATCH_FIRED) {
+      eventInfo.deletePath("decision_table_event_match_fired$.decision_table_event.timestamp");
+      name = eventInfo.getString("decision_table_event_match_fired$.decision_table_event.table_name");
+    }
+    else {
+      eventInfo.deletePath("decision_table_event_rules_loaded$.decision_table_event.timestamp");
+      name = eventInfo.getString("decision_table_event_rules_loaded$.decision_table_event.table_name");
+    }
     String eventJson = eventInfo.getJson();
-    String name = eventInfo.getString("$.decision_table_event.table_name");
 
-    if (name.equals("/decision_table/DTTestEvent.json") == false) {
+    if (name.equals("/com/americanexpress/unify/decision_table/DTTestEvent.json") == false) {
       return;
     }
 
     switch (event) {
       case MATCH_FIRED: {
-        String expectedJson = BaseUtils.getResourceAsString(TestHandler.class, "/decision_table/DTExpectedEventMatchFired.json");
+        String expectedJson = BaseUtils.getResourceAsString(TestHandler.class, "/com/americanexpress/unify/decision_table/DTExpectedEventMatchFired.json");
         Document exp = new JDocument(expectedJson);
         exp.deletePath("$.decision_table_event.timestamp");
         expectedJson = exp.getJson();
@@ -46,7 +53,7 @@ public class TestHandler implements EventHandler {
       }
 
       case RULES_LOADED: {
-        String expectedJson = BaseUtils.getResourceAsString(TestHandler.class, "/decision_table/DTExpectedEventRulesLoaded.json");
+        String expectedJson = BaseUtils.getResourceAsString(TestHandler.class, "/com/americanexpress/unify/decision_table/DTExpectedEventRulesLoaded.json");
         Document exp = new JDocument(expectedJson);
         exp.deletePath("$.decision_table_event.timestamp");
         expectedJson = exp.getJson();
