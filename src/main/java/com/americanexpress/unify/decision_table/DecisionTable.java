@@ -137,10 +137,19 @@ public final class DecisionTable {
     IdleExpiryCacheFactory.close(getCacheName("decision_table_jexl_cache"));
   }
 
+  /**
+   * @deprecated Use validate(String) method instead.
+   */
   public static void validate(String name, String json) {
     // try loading the decision table
-    // will throw an exception is the decisiont able is not valid
+    // will throw an exception if the decision table is not valid
     new JsonReader().getDecisionTableFromJson(name, json);
+  }
+
+  public static void validate(String json) {
+    // try loading the decision table
+    // will throw an exception is the decision table is not valid
+    new JsonReader().getDecisionTableFromJson("", json);
   }
 
   public static DecisionTable fromJson(String resourcePath) {
@@ -164,6 +173,9 @@ public final class DecisionTable {
     return dt;
   }
 
+  /**
+   * @deprecated Use fromJsonString(String, string) method instead.
+   */
   public static DecisionTable fromJson(String decisionTableName, String json) {
     IdleExpiryCache<DecisionTable> cache = IdleExpiryCacheFactory.instanceOf(getCacheName("decision_table_cache"));
     DecisionTable dt = cache.get(decisionTableName);
@@ -185,6 +197,13 @@ public final class DecisionTable {
     return dt;
   }
 
+  public static DecisionTable fromJsonString(String decisionTableName, String json) {
+    // we do not use the cache for this. It is left up to the clients to cache the returned decision table object
+    DecisionTable dt = new JsonReader().getDecisionTableFromJson(decisionTableName, json);
+    dt.invokeEventHandler(EventType.RULES_LOADED);
+    return dt;
+  }
+
   public static DecisionTable fromExcel(String resourcePath) {
     IdleExpiryCache<DecisionTable> cache = IdleExpiryCacheFactory.instanceOf(getCacheName("decision_table_cache"));
     DecisionTable dt = cache.get(resourcePath);
@@ -203,6 +222,17 @@ public final class DecisionTable {
     }
 
     return dt;
+  }
+
+  public static void unload(String decisionTableName) {
+    IdleExpiryCache<DecisionTable> cache = IdleExpiryCacheFactory.instanceOf(getCacheName("decision_table_cache"));
+    try {
+      rlock.lock();
+      cache.remove(decisionTableName);
+    }
+    finally {
+      rlock.unlock();
+    }
   }
 
   // package protected

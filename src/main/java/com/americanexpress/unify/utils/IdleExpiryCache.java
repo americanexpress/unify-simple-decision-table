@@ -19,10 +19,7 @@ import com.americanexpress.unify.base.UnifyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -33,8 +30,8 @@ public class IdleExpiryCache<V> {
 
   private static final Logger logger = LoggerFactory.getLogger(IdleExpiryCache.class);
 
-  private Map<String, Entry<V>> map = new ConcurrentHashMap<>();
-  private Map<Long, Entry<V>> tsMap = new TreeMap<>();
+  private Map<String, Entry<V>> entryMap = new ConcurrentHashMap<>();
+  private Map<Long, Map<String, Entry<V>>> tsMap = new TreeMap<>();
   private final ReentrantLock lock = new ReentrantLock();
   private long idleTimeoutInMs = 0;
   private Class<V> clazz = null;
@@ -51,20 +48,38 @@ public class IdleExpiryCache<V> {
   public V get(String key) {
     V value = null;
 
-    Entry<V> entry = map.get(key);
-    if (entry != null) {
-      value = entry.value;
+    try {
+      lock.lock();
 
-      // remove the entry from tsMap and put it again
-      try {
-        lock.lock();
-        tsMap.remove(entry.ts);
+      if (entryMap == null) {
+        throw new UnifyException(new ErrorTuple("error", "cache is closed"));
+      }
+
+      Entry<V> entry = entryMap.get(key);
+      if (entry != null) {
+        value = entry.value;
+
+        // remove the entry from map in tsMap and remove entry from tsMap if map is empty
+        Map<String, Entry<V>> map = tsMap.get(entry.ts);
+        map.remove(entry.key);
+        if (map.isEmpty() == true) {
+          tsMap.remove(entry.ts);
+        }
+
+        // assign a new ts
         entry.ts = System.nanoTime();
-        tsMap.put(entry.ts, entry);
+
+        // insert a new element in tsMap or update the existing one and put in tsMap
+        map = tsMap.get(entry.ts);
+        if (map == null) {
+          map = new HashMap<>();
+        }
+        map.put(entry.key, entry);
+        tsMap.put(entry.ts, map);
       }
-      finally {
-        lock.unlock();
-      }
+    }
+    finally {
+      lock.unlock();
     }
 
     return value;
@@ -79,11 +94,57 @@ public class IdleExpiryCache<V> {
     entry.key = key;
     entry.value = value;
     entry.ts = System.nanoTime();
-    map.put(key, entry);
 
     try {
       lock.lock();
-      tsMap.put(entry.ts, entry);
+
+      if (entryMap == null) {
+        throw new UnifyException(new ErrorTuple("error", "cache is closed"));
+      }
+
+      // create the new entry
+      Entry<V> oldEntry = entryMap.put(key, entry);
+
+      // remove the old entry from tsMap
+      if (oldEntry != null) {
+        Map<String, Entry<V>> map = tsMap.get(oldEntry.ts);
+        map.remove(oldEntry.key);
+        if (map.isEmpty() == true) {
+          tsMap.remove(oldEntry.ts);
+        }
+      }
+
+      // next we insert the entry into tsMap
+      Map<String, Entry<V>> map = tsMap.get(entry.ts);
+      if (map == null) {
+        map = new HashMap<>();
+      }
+      map.put(entry.key, entry);
+      tsMap.put(entry.ts, map);
+    }
+    finally {
+      lock.unlock();
+    }
+  }
+
+  public void remove(String key) {
+    try {
+      lock.lock();
+
+      if (entryMap == null) {
+        throw new UnifyException(new ErrorTuple("error", "cache is closed"));
+      }
+
+      // get the entry
+      Entry<V> entry = entryMap.get(key);
+      if (entry != null) {
+        entryMap.remove(key);
+        Map<String, Entry<V>> map = tsMap.get(entry.ts);
+        map.remove(entry.key);
+        if (map.isEmpty() == true) {
+          tsMap.remove(entry.ts);
+        }
+      }
     }
     finally {
       lock.unlock();
@@ -91,20 +152,38 @@ public class IdleExpiryCache<V> {
   }
 
   public int getSize() {
-    return map.size();
+    try {
+      lock.lock();
+      if (entryMap == null) {
+        throw new UnifyException(new ErrorTuple("error", "cache is closed"));
+      }
+      else {
+        return entryMap.size();
+      }
+    }
+    finally {
+      lock.unlock();
+    }
   }
 
   void close() {
-    map.clear();
-    map = null;
     try {
       lock.lock();
+
+      if (entryMap == null) {
+        return;
+      }
+
+      entryMap.clear();
+      entryMap = null;
+
       tsMap.clear();
       tsMap = null;
     }
     finally {
       lock.unlock();
     }
+
     timer.close();
     timer = null;
   }
@@ -112,12 +191,15 @@ public class IdleExpiryCache<V> {
   void clear() {
     try {
       lock.lock();
+      if (entryMap == null) {
+        throw new UnifyException(new ErrorTuple("error", "cache is closed"));
+      }
+      entryMap.clear();
       tsMap.clear();
     }
     finally {
       lock.unlock();
     }
-    map.clear();
   }
 
   private class Task extends UnifyTimerTask {
@@ -132,17 +214,25 @@ public class IdleExpiryCache<V> {
       try {
         lock.lock();
 
+        if (entryMap == null) {
+          return;
+        }
+
         // iterate through the tree map in ascending order i.e. from lowest to highest
         Set<Long> keySet = tsMap.keySet();
         Iterator<Long> iter = keySet.iterator();
         while (iter.hasNext()) {
           Long ts = iter.next();
-          Entry<V> e = tsMap.get(ts);
-          long interval = now - e.ts;
+          long interval = now - ts;
           if (interval >= (IdleExpiryCache.this.idleTimeoutInMs * 1000000)) {
+            Map<String, Entry<V>> map = tsMap.get(ts);
+            Set<String> mapKeySet = map.keySet();
+            for (String key : mapKeySet) {
+              Entry<V> e = map.get(key);
+              entryMap.remove(e.key);
+              logger.info("Removed key -> {}", e.key);
+            }
             iter.remove();
-            map.remove(e.key);
-            logger.info("Removed key -> {}", e.key);
           }
           else {
             break;
@@ -150,7 +240,7 @@ public class IdleExpiryCache<V> {
         }
       }
       catch (Exception e) {
-        logger.error(e.getMessage());
+        logger.error("IdleExpiryCache execute task failed", e);
       }
       finally {
         lock.unlock();

@@ -14,6 +14,8 @@
 
 package com.americanexpress.unify.utils;
 
+import com.americanexpress.unify.base.ErrorTuple;
+import com.americanexpress.unify.base.UnifyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,26 +52,31 @@ public class TimeExpiryCache<V> {
   }
 
   public V get(String key) {
-    Entry<V> entry = map.get(key);
-    if (entry == null) {
-      return null;
-    }
+    try {
+      lock.lock();
 
-    long now = System.currentTimeMillis();
-    if (now > entry.expiryTs) {
-      // remove entry from both maps and return null
-      try {
+      if (map == null) {
+        throw new UnifyException(new ErrorTuple("error", "cache is closed"));
+      }
+
+      Entry<V> entry = map.get(key);
+      if (entry == null) {
+        return null;
+      }
+
+      long now = System.currentTimeMillis();
+      if (now > entry.expiryTs) {
+        // remove entry from both maps and return null
         map.remove(entry.key);
-        lock.lock();
         removeFromExpiryTsMap(entry);
+        return null;
       }
-      finally {
-        lock.unlock();
-      }
-      return null;
-    }
 
-    return entry.value;
+      return entry.value;
+    }
+    finally {
+      lock.unlock();
+    }
   }
 
   private void removeFromExpiryTsMap(Entry<V> entry) {
@@ -114,8 +121,20 @@ public class TimeExpiryCache<V> {
     entry.expiryTs = System.currentTimeMillis() + expiryTimeoutInMs;
 
     try {
-      map.put(key, entry);
       lock.lock();
+
+      if (map == null) {
+        throw new UnifyException(new ErrorTuple("error", "cache is closed"));
+      }
+
+      Entry<V> oldEntry = map.put(key, entry);
+
+      // if the old entry is there remove it from the expiry map
+      if (oldEntry != null) {
+        removeFromExpiryTsMap(oldEntry);
+      }
+
+      // put the new entry
       putInExpiryTsMap(entry);
     }
     finally {
@@ -128,20 +147,35 @@ public class TimeExpiryCache<V> {
   }
 
   public int getSize() {
-    return map.size();
+    try {
+      lock.lock();
+      if (map == null) {
+        throw new UnifyException(new ErrorTuple("error", "cache is closed"));
+      }
+      return map.size();
+    }
+    finally {
+      lock.unlock();
+    }
   }
 
   void close() {
-    map.clear();
-    map = null;
     try {
       lock.lock();
+
+      if (map == null) {
+        return;
+      }
+
+      map.clear();
+      map = null;
       expiryTsMap.clear();
       expiryTsMap = null;
     }
     finally {
       lock.unlock();
     }
+
     timer.close();
     timer = null;
   }
@@ -149,12 +183,15 @@ public class TimeExpiryCache<V> {
   void clear() {
     try {
       lock.lock();
+      if (map == null) {
+        throw new UnifyException(new ErrorTuple("error", "cache is closed"));
+      }
       expiryTsMap.clear();
+      map.clear();
     }
     finally {
       lock.unlock();
     }
-    map.clear();
   }
 
   private class Task extends UnifyTimerTask {
@@ -164,6 +201,10 @@ public class TimeExpiryCache<V> {
 
       try {
         lock.lock();
+
+        if (map == null) {
+          return;
+        }
 
         // iterate through the tree map in ascending order i.e. from lowest to highest
         Set<Long> keySet = expiryTsMap.keySet();
@@ -184,7 +225,7 @@ public class TimeExpiryCache<V> {
         }
       }
       catch (Exception e) {
-        logger.error(e.getMessage());
+        logger.error("TimeExpiryCache execute task failed", e);
       }
       finally {
         lock.unlock();

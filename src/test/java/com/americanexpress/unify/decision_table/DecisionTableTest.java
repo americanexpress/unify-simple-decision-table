@@ -14,7 +14,10 @@
 
 package com.americanexpress.unify.decision_table;
 
-import com.americanexpress.unify.jdocs.*;
+import com.americanexpress.unify.jdocs.Configurator;
+import com.americanexpress.unify.jdocs.DocTypePrefixPolicyEnforceForAll;
+import com.americanexpress.unify.jdocs.Initializer;
+import com.americanexpress.unify.jdocs.JDocument;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
