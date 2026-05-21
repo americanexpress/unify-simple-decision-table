@@ -53,7 +53,7 @@ Unify-simple-decision-table is available as a jar file in Maven central with the
 ```pom
 <groupId>com.americanexpress.unify.simple_decision_table</groupId>
 <artifactId>unify-simple-decision-table</artifactId>
-<version>2.0.0</version>
+<version>2.0.1</version>
 ```
 
 ---
@@ -203,7 +203,15 @@ JSON based decision tables are loaded using the method `fromJson`. They can eith
 folder or by providing the decision table definition as a JSON string.
 
 Decision tables loaded are assigned a name at the time of loading. This name is used internally to store decision
-tables in a cache for fast access.
+tables in a cache for fast access. Only decision tables loaded from the resources folder are stored in the cache. Decision
+tables loaded from JSON strings are not. It is left to the clients to cache decision tables loaded from JSON strings
+should they want it.
+
+Should clients require to explicitly unload a decision table from the internal cache, they can call the below method:
+
+```java
+public static void unload(String decisionTableName)
+```
 
 #### Loading a JSON decision table using a file from the `resources` folder
 
@@ -216,16 +224,27 @@ In the above scenario, the decision table name is set to the resource file path 
 
 #### Loading a JSON decision table from a JSON string
 
-In this scenario, it is left upto the client to read the decision table definition as a JSON string and provide a decision table name.
-It is left to the clients to ensure that the decision table names used across the two methods are unique.
+In this scenario, it is left to the clients to read the decision table definition as a JSON string and provide a decision table name. Note
+that such decision tables are not cached. It is also left to the clients to make sure that the decision table names do not
+clash. As a side note, decision table names are used when sending decision table events for analytics.
 
 ```java
 String s = "{...}"; // string containing the decision table definition as a JSON string 
-DecisionTable dt = DecisionTable.fromJson("my_decision_table_name", s);
+DecisionTable dt = DecisionTable.fromJsonString("my_decision_table_name", s);
 ```
+
+Note that the static method `fromJson(String, String)` is deprecated in favor of the above.
 
 Once the decision table is loaded, further steps to work with the decision table in Java code remain the same irrespective
 of whether it was loaded from an Excel or from JSON file / string.
+
+JSON based decision tables can also be validated using the following method:
+
+```java
+public static void validate(String json)
+```
+
+Note that the static method `validate(String, String)` is deprecated in favor of the above.
 
 ### Break-down of a decision table
 
@@ -775,7 +794,7 @@ Use the below method to look for JSON decision table files across all folders an
 Excel in one go.
 
 ```java
-  public static List<String> createExcelFiles(String baseDirPath,String filePattern)
+public static List<String> createExcelFiles(String baseDirPath, String filePattern)
 ```
 
 This method takes in a root folder as the first parameter (for example `c:/folder` without a trailing slash)
